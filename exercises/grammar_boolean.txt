@@ -1,0 +1,3 @@
+Expr -> Expr and Term | Expr or Term | Term
+Term -> not Factor | Factor
+Factor -> ( Expr ) | true | false | var

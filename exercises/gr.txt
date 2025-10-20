@@ -1,0 +1,20 @@
+Stmt -> T12 Y14
+Expr -> z | T0 Y3 | T1 Y6 | n | x | T5 Y9 | y | T1 Y11
+Factor -> z | y | n | x | T0 Y3
+T0 -> (
+T1 -> Expr
+T10 -> +
+T12 -> Var
+T13 -> =
+T2 -> )
+T4 -> -
+T5 -> Term
+T7 -> *
+T8 -> Factor
+Term -> z | y | n | x | T5 Y9 | T0 Y3
+Var -> z | x | y
+Y11 -> T10 T5
+Y14 -> T13 T1
+Y3 -> T1 T2
+Y6 -> T4 T5
+Y9 -> T7 T8

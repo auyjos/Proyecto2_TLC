@@ -1,0 +1,9 @@
+S -> SN SV
+SN -> Det N | N | Det N Adj
+SV -> V | V SN | V SN SP
+SP -> Prep SN
+Det -> el | la | un | una
+N -> gato | perro | casa | libro | niño | niña
+Adj -> grande | pequeño | rojo | azul
+V -> come | bebe | lee | corre | duerme
+Prep -> en | con | de | por

@@ -1,0 +1,6 @@
+Stmt -> Var = Expr
+Expr -> Expr + Term | Expr - Term | Term
+Term -> Term * Factor | Factor
+Factor -> Var | Num | ( Expr )
+Var -> x | y | z
+Num -> n

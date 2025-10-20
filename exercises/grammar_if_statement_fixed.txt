@@ -1,0 +1,5 @@
+Stmt -> if Cond then Stmt | if Cond then Stmt else Stmt | Assign
+Cond -> Var eq Var | true | false
+Assign -> Var = Val
+Var -> x | y
+Val -> n

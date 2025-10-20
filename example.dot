@@ -1,0 +1,13 @@
+digraph ParseTree {
+  rankdir=TB;
+  node [fontname="Arial"];
+  n1 [label="S", shape=ellipse];
+  n2 [label="SN", shape=ellipse];
+  n1 -> n2;
+  n3 [label="Det\n'el'", shape=box];
+  n2 -> n3;
+  n4 [label="N\n'perro'", shape=box];
+  n2 -> n4;
+  n5 [label="SV\n'bebe'", shape=box];
+  n1 -> n5;
+}

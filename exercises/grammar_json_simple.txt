@@ -1,0 +1,7 @@
+Obj -> { Pairs }
+Pairs -> Pair | Pair , Pairs
+Pair -> Key : Val
+Key -> str
+Val -> str | num | Obj | Arr
+Arr -> [ Items ]
+Items -> Val | Val , Items
