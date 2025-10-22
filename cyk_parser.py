@@ -748,9 +748,9 @@ class CYKParser:
             for child in tree['children']:
                 self.print_parse_tree(child, indent + 1)
     
-    def save_parse_tree_graphviz(self, tree: dict, filename: str):
+    def save_parse_tree_graphviz(self, tree: dict, filename: str, auto_render: bool = True):
         """
-        Guarda el árbol de parsing en formato DOT (Graphviz).
+        Guarda el árbol de parsing en formato DOT (Graphviz) y opcionalmente lo renderiza.
         """
         node_counter = [0]
         
@@ -767,11 +767,15 @@ class CYKParser:
             if node['type'] == 'terminal':
                 label = f"{node['symbol']}\\n'{node['value']}'"
                 shape = "box"
+                style = "filled"
+                fillcolor = "lightblue"
             else:
                 label = node['symbol']
                 shape = "ellipse"
+                style = "filled"
+                fillcolor = "lightgreen"
             
-            dot = f'  {node_id} [label="{label}", shape={shape}];\n'
+            dot = f'  {node_id} [label="{label}", shape={shape}, style="{style}", fillcolor="{fillcolor}"];\n'
             
             if parent_id:
                 dot += f'  {parent_id} -> {node_id};\n'
@@ -783,14 +787,64 @@ class CYKParser:
             return dot
         
         try:
+            # Asegurar que el archivo esté en output/visualizations/
+            if not filename.startswith('output/visualizations/'):
+                base_name = os.path.basename(filename)
+                filename = os.path.join('output', 'visualizations', base_name)
+            
+            # Asegurar que tenga extensión .dot
+            if not filename.endswith('.dot'):
+                filename += '.dot'
+            
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write("digraph ParseTree {\n")
                 f.write("  rankdir=TB;\n")
-                f.write("  node [fontname=\"Arial\"];\n")
+                f.write("  node [fontname=\"Arial\", fontsize=12];\n")
+                f.write("  edge [color=\"#333333\"];\n")
+                f.write("  bgcolor=\"white\";\n")
                 f.write(tree_to_dot(tree))
                 f.write("}\n")
+            
             print(f"✓ Árbol guardado en: {filename}")
-            print(f"  Para visualizar: dot -Tpng {filename} -o parse_tree.png")
+            
+            # Intentar renderizar automáticamente
+            if auto_render:
+                png_filename = filename.replace('.dot', '.png')
+                svg_filename = filename.replace('.dot', '.svg')
+                
+                import subprocess
+                
+                # Intentar generar PNG
+                try:
+                    result = subprocess.run(
+                        ['dot', '-Tpng', filename, '-o', png_filename],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    if result.returncode == 0:
+                        print(f"✓ Imagen PNG generada: {png_filename}")
+                    else:
+                        print(f"  ℹ No se pudo generar PNG automáticamente")
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    print(f"  ℹ Graphviz no disponible. Para visualizar manualmente:")
+                    print(f"    dot -Tpng {filename} -o parse_tree.png")
+                
+                # Intentar generar SVG
+                try:
+                    result = subprocess.run(
+                        ['dot', '-Tsvg', filename, '-o', svg_filename],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    if result.returncode == 0:
+                        print(f"✓ Imagen SVG generada: {svg_filename}")
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    pass
+            else:
+                print(f"  Para visualizar: dot -Tpng {filename} -o parse_tree.png")
+            
             return True
         except Exception as e:
             print(f"✗ Error al guardar árbol: {e}")
@@ -810,6 +864,100 @@ def list_grammar_files(directory="exercises"):
             files.append(file)
     
     return sorted(files)
+
+
+def list_visualization_files():
+    """
+    Lista todos los archivos de visualización generados.
+    """
+    viz_dir = "output/visualizations"
+    if not os.path.exists(viz_dir):
+        return []
+    
+    files = {
+        'dot': [],
+        'png': [],
+        'svg': []
+    }
+    
+    for file in os.listdir(viz_dir):
+        if file.endswith('.dot'):
+            files['dot'].append(file)
+        elif file.endswith('.png'):
+            files['png'].append(file)
+        elif file.endswith('.svg'):
+            files['svg'].append(file)
+    
+    return files
+
+
+def view_visualization():
+    """
+    Muestra un menú para visualizar archivos generados.
+    """
+    files = list_visualization_files()
+    
+    if not files['png'] and not files['svg'] and not files['dot']:
+        print("\n⚠ No hay visualizaciones generadas aún")
+        return
+    
+    print("\n" + "="*70)
+    print("VISUALIZACIONES DISPONIBLES")
+    print("="*70)
+    
+    all_files = []
+    
+    if files['png']:
+        print("\nArchivos PNG:")
+        for f in sorted(files['png']):
+            all_files.append(('png', f))
+            print(f"  {len(all_files)}. {f}")
+    
+    if files['svg']:
+        print("\nArchivos SVG:")
+        for f in sorted(files['svg']):
+            all_files.append(('svg', f))
+            print(f"  {len(all_files)}. {f}")
+    
+    if files['dot']:
+        print("\nArchivos DOT:")
+        for f in sorted(files['dot']):
+            all_files.append(('dot', f))
+            print(f"  {len(all_files)}. {f}")
+    
+    print("="*70)
+    
+    try:
+        choice = input("\nSeleccione un archivo para abrir (1-{0}, 0=cancelar): ".format(len(all_files))).strip()
+        idx = int(choice) - 1
+        
+        if idx < 0:
+            return
+        
+        if 0 <= idx < len(all_files):
+            file_type, filename = all_files[idx]
+            filepath = os.path.join("output", "visualizations", filename)
+            
+            import subprocess
+            import platform
+            
+            # Abrir el archivo con el visor predeterminado
+            try:
+                if platform.system() == 'Darwin':  # macOS
+                    subprocess.run(['open', filepath])
+                elif platform.system() == 'Windows':
+                    os.startfile(filepath)
+                else:  # Linux y otros
+                    subprocess.run(['xdg-open', filepath])
+                print(f"✓ Abriendo {filename}...")
+            except Exception as e:
+                print(f"✗ No se pudo abrir automáticamente: {e}")
+                print(f"  Ruta: {os.path.abspath(filepath)}")
+        else:
+            print("\n⚠ Opción inválida")
+    
+    except (ValueError, KeyboardInterrupt):
+        return
 
 
 def select_grammar_file(directory="exercises"):
@@ -857,8 +1005,9 @@ def main():
     converter = CNFConverter()
     parser = CYKParser()
     
-    # Crear carpeta de output si no existe
+    # Crear carpetas de output si no existen
     os.makedirs("output", exist_ok=True)
+    os.makedirs("output/visualizations", exist_ok=True)
     
     print("\n" + "="*70)
     print("PROYECTO 2 - ALGORITMO CYK".center(70))
@@ -873,11 +1022,12 @@ def main():
         print("2. Cargar gramática CNF existente")
         print("3. Validar oracion con CYK")
         print("4. Ejecutar ejemplos de prueba")
-        print("5. Salir")
+        print("5. Ver visualizaciones generadas")
+        print("6. Salir")
         print("="*70)
         
         try:
-            choice = input("\nSeleccione una opción (1-5): ").strip()
+            choice = input("\nSeleccione una opción (1-6): ").strip()
             
             if choice == '1':
                 # Seleccionar archivo de entrada
@@ -942,10 +1092,15 @@ def main():
                         print("="*70)
                         parser.print_parse_tree(tree)
                         
-                        print("\n¿Guardar árbol en formato DOT? (s/n): ", end='')
+                        print("\n¿Guardar y visualizar árbol? (s/n): ", end='')
                         if input().strip().lower() == 's':
-                            dot_file = input("Nombre del archivo (ej: tree.dot): ").strip()
-                            parser.save_parse_tree_graphviz(tree, dot_file)
+                            # Generar nombre automático basado en la oración
+                            safe_name = re.sub(r'[^\w\s-]', '', sentence)
+                            safe_name = re.sub(r'[-\s]+', '_', safe_name)
+                            safe_name = safe_name[:50]  # Limitar longitud
+                            timestamp = time.strftime("%Y%m%d_%H%M%S")
+                            dot_file = f"parse_tree_{safe_name}_{timestamp}.dot"
+                            parser.save_parse_tree_graphviz(tree, dot_file, auto_render=True)
             
             elif choice == '4':
                 if not parser.grammar:
@@ -985,6 +1140,9 @@ def main():
                     print(f"{sentence:<45} {status:<12} {elapsed*1000:>10.4f}")
             
             elif choice == '5':
+                view_visualization()
+            
+            elif choice == '6':
                 print("\n¡Hasta luego!")
                 break
             
