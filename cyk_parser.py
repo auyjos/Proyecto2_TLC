@@ -613,7 +613,7 @@ class CYKParser:
     
     def parse(self, sentence: str, verbose=True) -> Tuple[bool, float, Optional[dict]]:
         """
-        Algoritmo CYK para determinar si una sentencia pertenece al lenguaje.
+        Algoritmo CYK para determinar si una oracion pertenece al lenguaje.
         
         Retorna: (acepta: bool, tiempo: float, tabla: dict)
         """
@@ -635,7 +635,7 @@ class CYKParser:
             print(f"\n{'='*60}")
             print("ALGORITMO CYK - ANÁLISIS")
             print('='*60)
-            print(f"Sentencia: {sentence}")
+            print(f"Oracion: {sentence}")
             print(f"Palabras: {words}")
             print(f"\nPaso 1: Subcadenas de longitud 1")
         
@@ -871,7 +871,7 @@ def main():
         print("="*70)
         print("1. Convertir gramática CFG a CNF")
         print("2. Cargar gramática CNF existente")
-        print("3. Validar sentencia con CYK")
+        print("3. Validar oracion con CYK")
         print("4. Ejecutar ejemplos de prueba")
         print("5. Salir")
         print("="*70)
@@ -925,10 +925,10 @@ def main():
                     continue
                 
                 print("\n" + "-"*70)
-                sentence = input("Ingrese la sentencia a validar: ").strip()
+                sentence = input("Ingrese la oracion a validar: ").strip()
                 
                 if not sentence:
-                    print("⚠ Sentencia vacía")
+                    print("⚠ Oracion vacía")
                     continue
                 
                 accepted, elapsed, parse_data = parser.parse(sentence, verbose=True)
@@ -978,7 +978,7 @@ def main():
                 print("\n" + "="*70)
                 print("RESUMEN DE PRUEBAS")
                 print("="*70)
-                print(f"{'Sentencia':<45} {'Estado':<12} {'Tiempo (ms)'}")
+                print(f"{'Oracion':<45} {'Estado':<12} {'Tiempo (ms)'}")
                 print("-"*70)
                 for sentence, accepted, elapsed in results:
                     status = "ACEPTADA" if accepted else "RECHAZADA"
