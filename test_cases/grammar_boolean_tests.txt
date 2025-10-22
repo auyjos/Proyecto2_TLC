@@ -1,0 +1,24 @@
+# Casos de prueba para expresiones booleanas
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos
+true | accept
+false | accept
+true and false | accept
+true or false | accept
+not true | accept
+not false | accept
+true and true or false | accept
+not true and false | accept
+( true ) | accept
+( true and false ) | accept
+not ( true or false ) | accept
+
+# Casos inválidos
+and true | reject
+or false | reject
+true and | reject
+not | reject
+( true | reject
+true ) | reject
+true and and false | reject

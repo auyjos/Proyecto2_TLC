@@ -10,6 +10,14 @@ import time
 from collections import defaultdict
 from typing import Dict, List, Optional, Set, Tuple
 
+# Importar módulo de testing
+try:
+    from test_runner import TestRunner, select_test_file
+    TEST_MODULE_AVAILABLE = True
+except ImportError:
+    TEST_MODULE_AVAILABLE = False
+    print("⚠ Módulo de testing no disponible")
+
 
 class CNFConverter:
     """
@@ -1103,41 +1111,49 @@ def main():
                             parser.save_parse_tree_graphviz(tree, dot_file, auto_render=True)
             
             elif choice == '4':
-                if not parser.grammar:
-                    print("\n⚠ Primero debe cargar una gramática CNF")
-                    continue
+                try:
+                    if not parser.grammar:
+                        print("\n⚠ Primero debe cargar una gramática CNF")
+                        continue
+                    
+                    if not TEST_MODULE_AVAILABLE:
+                        print("\n⚠ El módulo de testing no está disponible")
+                        continue
+                    
+                    # Crear instancia del test runner
+                    test_runner = TestRunner(parser)
+                    
+                    # Seleccionar archivo de pruebas
+                    test_file = select_test_file(test_runner)
+                    
+                    if not test_file:
+                        continue
+                    
+                    # Preguntar si desea modo verbose
+                    print("\n¿Ejecutar en modo detallado (verbose)? (s/n): ", end='')
+                    verbose_input = input().strip().lower()
+                    verbose = verbose_input == 's'
+                    
+                    # Ejecutar suite de pruebas
+                    stats = test_runner.run_test_suite(test_file, verbose=verbose)
+                    
+                    # Mostrar resumen
+                    test_runner.print_summary(stats)
+                    
+                    # Preguntar si desea exportar resultados
+                    if stats['total'] > 0:
+                        print("\n¿Exportar resultados a archivo? (s/n): ", end='')
+                        export_input = input().strip().lower()
+                        if export_input == 's':
+                            # Generar nombre de archivo basado en el test
+                            output_name = test_file.replace('_tests.txt', '_results.txt')
+                            output_path = os.path.join('output', output_name)
+                            test_runner.export_results(stats, output_path)
                 
-                # Ejemplos de prueba
-                test_sentences = [
-                    "she eats a cake with a fork",
-                    "the cat drinks the beer",
-                    "he eats",
-                    "she drinks juice",
-                    "the dog eats meat with a spoon",
-                    "fork eats the cat",  # Inválida
-                    "she the eats",  # Inválida
-                ]
-                
-                print("\n" + "="*70)
-                print("PRUEBAS AUTOMÁTICAS")
-                print("="*70)
-                
-                results = []
-                for sentence in test_sentences:
-                    print(f"\nProbando: '{sentence}'")
-                    accepted, elapsed, _ = parser.parse(sentence, verbose=False)
-                    results.append((sentence, accepted, elapsed))
-                    status = "✓ ACEPTADA" if accepted else "✗ RECHAZADA"
-                    print(f"  {status} ({elapsed*1000:.4f} ms)")
-                
-                print("\n" + "="*70)
-                print("RESUMEN DE PRUEBAS")
-                print("="*70)
-                print(f"{'Oracion':<45} {'Estado':<12} {'Tiempo (ms)'}")
-                print("-"*70)
-                for sentence, accepted, elapsed in results:
-                    status = "ACEPTADA" if accepted else "RECHAZADA"
-                    print(f"{sentence:<45} {status:<12} {elapsed*1000:>10.4f}")
+                except Exception as e:
+                    print(f"\n✗ Error al ejecutar pruebas: {e}")
+                    import traceback
+                    traceback.print_exc()
             
             elif choice == '5':
                 view_visualization()

@@ -1,0 +1,19 @@
+# Casos de prueba para palíndromos
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos (palíndromos)
+a | accept
+b | accept
+a a | accept
+b b | accept
+a b a | accept
+b a b | accept
+a a a | accept
+a b b a | accept
+a a b a a | accept
+
+# Casos inválidos
+a b | reject
+a a b | reject
+a b b | reject
+a b c | reject

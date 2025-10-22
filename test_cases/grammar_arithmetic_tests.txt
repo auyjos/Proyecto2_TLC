@@ -1,0 +1,23 @@
+# Casos de prueba para expresiones aritméticas
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos
+id + id | accept
+id * id | accept
+id + id * id | accept
+id * id + id | accept
+( id ) | accept
+( id + id ) | accept
+( id + id ) * id | accept
+id * ( id + id ) | accept
+( ( id ) ) | accept
+
+# Casos inválidos
+id + | reject
++ id | reject
+id id | reject
+( id | reject
+id ) | reject
++ + id | reject
+id * * id | reject
+( ) | reject

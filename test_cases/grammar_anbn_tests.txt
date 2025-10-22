@@ -1,0 +1,17 @@
+# Casos de prueba para gramática a^n b^n
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos (a^n b^n)
+a b | accept
+a a b b | accept
+a a a b b b | accept
+a a a a b b b b | accept
+
+# Casos inválidos
+a | reject
+b | reject
+a a b | reject
+a b b | reject
+a a a b b | reject
+b a | reject
+a b a | reject

@@ -57,7 +57,37 @@ Implementación completa del algoritmo de parsing CYK:
     │ - Convierte a CNF    │  └─────────────────┘
     │ - Guarda resultado   │
     └──────────────────────┘
+                              ┌──────────────────┐
+                              │   TestRunner     │
+                              │ (test_runner.py) │
+                              └──────┬───────────┘
+                          ┌──────────┴──────────┐
+                          │ - Carga tests       │
+                          │ - Ejecuta suites    │
+                          │ - Genera reportes   │
+                          │ - Exporta resultados│
+                          └─────────────────────┘
 ```
+
+### Módulos
+
+#### `cyk_parser.py` (Principal)
+Contiene las clases principales y el menú interactivo.
+
+#### `test_runner.py` (Módulo de Testing)
+**NUEVO**: Sistema modular de pruebas automáticas.
+
+**Clases:**
+- `TestCase`: Representa un caso de prueba individual
+- `TestRunner`: Ejecuta suites de pruebas y genera reportes
+
+**Características:**
+- Carga casos de prueba desde archivos externos (`test_cases/*.txt`)
+- Formato simple: `<oración> | <accept/reject>`
+- Ejecución en modo normal o verbose
+- Estadísticas detalladas (total, exitosas, fallidas, tiempo promedio)
+- Exportación de resultados a archivos
+- Soporte para comentarios y múltiples gramáticas
 
 ### Clases Principales
 
@@ -212,8 +242,14 @@ python cyk_parser.py
 
 4. **Ejecutar pruebas automáticas**
    - Seleccionar opción 4
-   - Ejecuta un conjunto predefinido de pruebas
-   - Muestra resumen con tiempos de ejecución
+   - Elegir archivo de casos de prueba (ej: `english_grammar_tests.txt`)
+   - Optar por modo verbose o compacto
+   - Ver resultados y estadísticas
+   - Opcionalmente exportar resultados a archivo
+
+5. **Ver visualizaciones generadas**
+   - Seleccionar opción 5
+   - Explorar y abrir archivos PNG/SVG/DOT generados
 
 ## Ejemplos de Ejecución
 
@@ -409,28 +445,41 @@ Para sentencias típicas (5-7 palabras):
 ## Estructura de Archivos
 
 ```
-Proyecto2/
+Proyecto2_TLC/
 │
-├── cyk_parser.py              # Programa principal (NUEVO)
-├── Proyecto2.py               # Eliminación ε-producciones (Lab7)
+├── cyk_parser.py              # Programa principal
+├── test_runner.py             # Módulo de testing (NUEVO)
 │
-├── english_grammar.txt        # Gramática CFG para inglés (NUEVO)
-├── english_grammar_cnf.txt    # CNF generada (se crea al ejecutar)
+├── exercises/                 # Gramáticas de entrada
+│   ├── english_grammar.txt
+│   ├── grammar_anbn.txt
+│   ├── grammar_arithmetic.txt
+│   ├── grammar_palindrome.txt
+│   ├── grammar_balanced_parentheses.txt
+│   ├── grammar_boolean.txt
+│   └── grammar_spanish_simple.txt
 │
-├── grammar1.txt               # Ejemplos de gramáticas Lab7
-├── grammar2.txt
-├── grammar3.txt
+├── output/                    # Archivos generados
+│   ├── english_grammar_cnf.txt
+│   ├── english_grammar_results.txt
+│   └── visualizations/        # Árboles de parsing (NUEVO)
+│       ├── parse_tree_*.dot
+│       ├── parse_tree_*.png
+│       └── parse_tree_*.svg
 │
-├── 1.txt                      # Ejemplo adicional
-├── 1-cnf.txt                  # CNF del ejemplo
+├── test_cases/                # Casos de prueba (NUEVO)
+│   ├── README.md
+│   ├── english_grammar_tests.txt
+│   ├── grammar_anbn_tests.txt
+│   ├── grammar_arithmetic_tests.txt
+│   ├── grammar_palindrome_tests.txt
+│   ├── grammar_balanced_parentheses_tests.txt
+│   ├── grammar_boolean_tests.txt
+│   └── grammar_spanish_simple_tests.txt
 │
 ├── README.md                  # Esta documentación
-├── README_Lab7.md             # Documentación Lab7
-│
-└── ejemplos/                  # Árboles de parsing (opcional)
-    ├── tree1.dot
-    ├── tree2.dot
-    └── tree3.dot
+├── GUIA_RAPIDA.md            # Guía rápida de uso
+└── EJEMPLOS_PRUEBA.md        # Ejemplos de pruebas
 ```
 
 ## Referencias

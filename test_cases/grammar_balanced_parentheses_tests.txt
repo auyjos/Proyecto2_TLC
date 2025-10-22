@@ -1,0 +1,17 @@
+# Casos de prueba para paréntesis balanceados
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos
+( ) | accept
+( ( ) ) | accept
+( ) ( ) | accept
+( ( ) ( ) ) | accept
+( ( ( ) ) ) | accept
+
+# Casos inválidos
+( | reject
+) | reject
+( ( ) | reject
+( ) ) | reject
+) ( | reject
+( ) ) ( | reject

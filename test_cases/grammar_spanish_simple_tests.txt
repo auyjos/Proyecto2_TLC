@@ -1,0 +1,13 @@
+# Casos de prueba para gramática española simple
+# Formato: <oración> | <esperado: accept/reject>
+
+# Casos válidos
+el gato come pescado | accept
+la niña bebe leche | accept
+el perro corre | accept
+la casa es grande | accept
+
+# Casos inválidos (si los hay según tu gramática)
+gato el come | reject
+come pescado | reject
+el la gato | reject

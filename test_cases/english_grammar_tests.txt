@@ -1,0 +1,19 @@
+# Casos de prueba para gramática inglesa (english_grammar.txt)
+# Formato: <oración> | <esperado: accept/reject>
+# Líneas que empiezan con # son comentarios
+
+# Casos válidos
+she eats a cake with a fork | accept
+the cat drinks the beer | accept
+he eats | accept
+she drinks juice | accept
+the dog eats meat with a spoon | accept
+he drinks beer | accept
+the cat eats | accept
+
+# Casos inválidos
+fork eats the cat | reject
+she the eats | reject
+eats she | reject
+the drinks | reject
+cat the | reject
