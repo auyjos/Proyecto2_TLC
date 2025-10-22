@@ -29,7 +29,11 @@ class CNFConverter:
         Formato: A -> alpha | beta | gamma
         Soporta símbolos multi-carácter (ej: id, num) y símbolos especiales (+, *, etc.)
         """
-        line = line.strip()
+        # Eliminar espacios y posibles marcas BOM (﻿) que aparecen en algunos
+        # archivos guardados desde editores de texto. Si no se remueve, el símbolo
+        # inicial queda registrado como "\ufeffS" y el algoritmo CYK no puede
+        # reconocerlo adecuadamente en la tabla dinámica ni en el árbol de parsing.
+        line = line.replace('\ufeff', '').strip()
         if not line or line.startswith('#'):
             return None, []
         
@@ -56,13 +60,15 @@ class CNFConverter:
         """
         Tokeniza una producción en símbolos individuales.
         Maneja símbolos multi-carácter como 'id', 'num', 'Det', 'NP', 'VP', etc.
-        
+
         Reglas:
         - Palabras que empiezan con MAYÚSCULA (S, NP, VP, Det, etc.) = no-terminales
         - Palabras minúsculas (id, num, he, she, cat, etc.) = terminales
         - Símbolos especiales (+, *, (, ), etc.) = terminales
         - 'e' o 'ε' = epsilon
         """
+        prod = prod.replace('\ufeff', '')
+
         if prod in ['ε', 'e', '']:
             return ['ε']
         
@@ -506,9 +512,11 @@ class CYKParser:
         - 'e' o 'ε' = epsilon
         """
         # Si ya está separado por espacios, usarlo directamente
+        prod = prod.replace('\ufeff', '')
+
         if ' ' in prod:
             return prod.split()
-        
+
         if prod in ['ε', 'e', '']:
             return ['ε']
         
@@ -557,7 +565,7 @@ class CYKParser:
             
             with open(filename, 'r', encoding='utf-8') as f:
                 for line in f:
-                    line = line.strip()
+                    line = line.replace('\ufeff', '').strip()
                     if not line or line.startswith('#'):
                         continue
                     
@@ -580,7 +588,7 @@ class CYKParser:
                         self.grammar[left] = []
                     
                     for prod in right.split('|'):
-                        prod = prod.strip()
+                        prod = prod.replace('\ufeff', '').strip()
                         # Tokenizar la producción para manejar símbolos multi-carácter
                         symbols = self.tokenize_production(prod)
                         
