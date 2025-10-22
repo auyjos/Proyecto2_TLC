@@ -1,0 +1,16 @@
+S -> NP VP | S X_S
+X_S -> Conj S
+NP -> Det N | Det X_AdjP_N | NP PP | cat | dog | beer | cake | juice | meat | soup | fork | knife | spoon | oven | kitchen | girl | boy | he | she
+AdjP -> Adj AdjP | small | big | cold | hot | metal | wooden
+VP -> V NP | V PP | V X_NP_PP | VP X_VP | eats | drinks | cooks | cuts | sees
+X_VP -> Conj VP
+PP -> P NP
+X_AdjP_N -> AdjP N
+X_NP_PP -> NP PP
+Conj -> and
+Det -> the | a | some
+N -> cat | dog | beer | cake | juice | meat | soup | fork | knife | spoon | oven | kitchen | girl | boy
+Pron -> he | she
+V -> eats | drinks | cooks | cuts | sees
+P -> with | in | on | from
+Adj -> small | big | cold | hot | metal | wooden
